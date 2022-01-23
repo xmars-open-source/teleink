@@ -95,7 +95,6 @@ const questions = [
 	if (passphrase && friendPublicKey && privateKey) {
 		const encryption = new Encryption(passphrase, friendPublicKey, privateKey);
 
-		encryption.setFriendPublicKey(friendPublicKey);
 		render(<App encryption={encryption} token={token} />);
 	}
 })();

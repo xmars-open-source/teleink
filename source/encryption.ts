@@ -53,10 +53,6 @@ class Encryption {
 		this.privateKey = privateKey;
 	}
 
-	setFriendPublicKey(friendPublicKey: string) {
-		this.friendPublicKey = friendPublicKey;
-	}
-
 	encrypt(toEncrypt: string) {
 		return crypto
 			.publicEncrypt(this.friendPublicKey, Buffer.from(toEncrypt))
