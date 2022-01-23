@@ -41,6 +41,7 @@ const questions = [
 ];
 
 (async () => {
+	let token = cli.flags.token;
 	let friendPublicKey;
 	let privateKey;
 	let publicKey;
@@ -52,12 +53,14 @@ const questions = [
 		console.error('Cannot find friend`s public key');
 	}
 
-	let { token } = await prompts({
-		type: 'text',
-		name: 'token',
-		message: 'Enter token of your bot',
-		initial: cli.flags.token,
-	});
+	if (!cli.flags.token) {
+		token = await prompts({
+			type: 'text',
+			name: 'token',
+			message: 'Enter token of your bot',
+			initial: cli.flags.token,
+		}).token;
+	}
 
 	const { passphrase } = await prompts({
 		type: 'text',

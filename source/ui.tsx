@@ -10,7 +10,7 @@ const App: FC<{ encryption: Encryption; token?: string }> = ({
 	token,
 }) => {
 	const [history, setHistory] = useState<string[]>([]);
-	const [chatId, setChatId] = useState<string>('-1001722320265');
+	const [chatId, setChatId] = useState<string>();
 	const [input, setInput] = useState('');
 
 	// Hack for state because of callbacks
@@ -21,8 +21,18 @@ const App: FC<{ encryption: Encryption; token?: string }> = ({
 		const bot = new Telegraf(token);
 
 		bot.on('channel_post', (ctx) => {
-			// I'm not sure why the channel_post doesn't have `text` in d.ts
-			addHistory(encryption.decrypt((ctx.update.channel_post as any).text));
+			if (!chatId) {
+				setChatId(ctx.chat.id.toString());
+			}
+
+			const text = (ctx.update.channel_post as any).text;
+
+			try {
+				// I'm not sure why the channel_post doesn't have `text` in d.ts
+				addHistory(encryption.decrypt(text));
+			} catch (e) {
+				console.log('Err. Received message from channel: ', text);
+			}
 		});
 
 		process.once('SIGINT', () => bot.stop('SIGINT'));
@@ -54,12 +64,23 @@ const App: FC<{ encryption: Encryption; token?: string }> = ({
 
 	return (
 		<Box flexDirection="column">
-			<Box flexDirection="column" borderStyle="single">
-				{renderHistory}
-			</Box>
-			<Box flexDirection="column" borderStyle="double" marginTop={1}>
-				<TextInput value={input} onChange={setInput} onSubmit={onSubmit} />
-			</Box>
+			{!chatId ? (
+				<Box>
+					<Text color="red">
+						Waiting for a chat id. Send message in channel via Telegram or wait
+						for a message from friend.
+					</Text>
+				</Box>
+			) : (
+				<>
+					<Box flexDirection="column" borderStyle="single">
+						{renderHistory}
+					</Box>
+					<Box flexDirection="column" borderStyle="double" marginTop={1}>
+						<TextInput value={input} onChange={setInput} onSubmit={onSubmit} />
+					</Box>
+				</>
+			)}
 		</Box>
 	);
 };

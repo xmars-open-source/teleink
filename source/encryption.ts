@@ -30,7 +30,7 @@ class Encryption {
 		let filehandle: FileHandle;
 
 		try {
-			filehandle = await open(path.resolve(filepath), 'r+');
+			filehandle = await open(path.resolve(filepath), 'r');
 			return filehandle.readFile('utf8');
 		} finally {
 			filehandle.close();
@@ -41,7 +41,7 @@ class Encryption {
 		let filehandle: FileHandle;
 
 		try {
-			filehandle = await open(path.resolve(filepath), 'w+');
+			filehandle = await open(path.resolve(filepath, data), 'w');
 		} finally {
 			filehandle.close();
 		}
