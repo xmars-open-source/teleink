@@ -26,20 +26,6 @@ const cli = meow(
 	}
 );
 
-const questions = [
-	{
-		type: 'string',
-		name: 'friendPublic',
-		message: 'Friends',
-	},
-	{
-		type: 'text',
-		name: 'about',
-		message: 'Tell something about yourself',
-		initial: 'Why should I?',
-	},
-];
-
 (async () => {
 	let token = cli.flags.token;
 	let friendPublicKey;
