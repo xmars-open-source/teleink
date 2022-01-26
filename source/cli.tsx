@@ -5,6 +5,7 @@ import prompts from 'prompts';
 import meow from 'meow';
 import App from './ui';
 import Encryption from './encryption';
+import Files from './files';
 
 const cli = meow(
 	`
@@ -33,7 +34,7 @@ const cli = meow(
 	let publicKey;
 
 	try {
-		friendPublicKey = await Encryption.readFile('friendPublicKey.pem');
+		friendPublicKey = await Files.readFile('friendPublicKey.pem');
 	} catch (e) {
 		console.error(e);
 		console.error('Cannot find friend`s public key');
@@ -66,14 +67,14 @@ const cli = meow(
 	}
 
 	try {
-		privateKey = await Encryption.readFile('privateKey.pem');
+		privateKey = await Files.readFile('privateKey.pem');
 	} catch (e) {
 		console.error(e);
 		console.log(`Cannot read private key. You can generate a new one.`);
 	}
 
 	try {
-		publicKey = await Encryption.readFile('publicKey.pem');
+		publicKey = await Files.readFile('publicKey.pem');
 
 		console.log(`Your public key: `);
 		console.log(publicKey);

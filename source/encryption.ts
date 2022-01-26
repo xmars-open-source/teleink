@@ -1,6 +1,5 @@
-import { open, FileHandle } from 'fs/promises';
-import path from 'path';
 import crypto, { generateKeyPairSync } from 'crypto';
+import Files from './files';
 
 class Encryption {
 	private passphrase: string;
@@ -22,29 +21,8 @@ class Encryption {
 			},
 		});
 
-		await Encryption.writeFile('publicKey.pem', publicKey);
-		await Encryption.writeFile('privateKey.pem', privateKey);
-	}
-
-	static async readFile(filepath: string) {
-		let filehandle: FileHandle;
-
-		try {
-			filehandle = await open(path.resolve(filepath), 'r');
-			return filehandle.readFile('utf8');
-		} finally {
-			filehandle.close();
-		}
-	}
-
-	static async writeFile(filepath: string, data: string) {
-		let filehandle: FileHandle;
-
-		try {
-			filehandle = await open(path.resolve(filepath, data), 'w');
-		} finally {
-			filehandle.close();
-		}
+		await Files.writeFile('publicKey.pem', publicKey);
+		await Files.writeFile('privateKey.pem', privateKey);
 	}
 
 	constructor(passphrase: string, friendPublicKey: string, privateKey: string) {

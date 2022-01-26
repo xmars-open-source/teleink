@@ -25,10 +25,10 @@ const App: FC<{ encryption: Encryption; token?: string }> = ({
 				setChatId(ctx.chat.id.toString());
 			}
 
+			// channel_post doesn't have `text` in d.ts
 			const text = (ctx.update.channel_post as any).text;
 
 			try {
-				// I'm not sure why the channel_post doesn't have `text` in d.ts
 				addHistory(encryption.decrypt(text));
 			} catch (e) {
 				console.log('Err. Received message from channel: ', text);
