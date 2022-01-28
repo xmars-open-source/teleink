@@ -7,7 +7,7 @@ class Encryption {
 	private friendPublicKey: string;
 
 	static async generateKeys(passphrase: string) {
-		const { publicKey, privateKey } = generateKeyPairSync('rsa', {
+		return generateKeyPairSync('rsa', {
 			modulusLength: 4096,
 			publicKeyEncoding: {
 				type: 'spki',
@@ -20,9 +20,6 @@ class Encryption {
 				passphrase: passphrase,
 			},
 		});
-
-		await Files.writeFile('publicKey.pem', publicKey);
-		await Files.writeFile('privateKey.pem', privateKey);
 	}
 
 	constructor(passphrase: string, friendPublicKey: string, privateKey: string) {

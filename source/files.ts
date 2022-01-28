@@ -22,6 +22,28 @@ class Files {
 			filehandle.close();
 		}
 	}
+
+	static async readFiles(filepaths: string[], errors?: string[]) {
+		const result = [];
+
+		filepaths.forEach(async (filepath, i) => {
+			try {
+				let filehandle: FileHandle;
+
+				filehandle = await open(path.resolve(filepath), 'r');
+				result.push(await filehandle.readFile('utf8'));
+				filehandle.close();
+			} catch (e) {
+				if (errors[i]) {
+					console.log(errors[i]);
+				} else {
+					console.error(e);
+				}
+			}
+		});
+
+		return result;
+	}
 }
 
 export default Files;

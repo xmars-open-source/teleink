@@ -33,20 +33,25 @@ const cli = meow(
 	let privateKey;
 	let publicKey;
 
-	try {
-		friendPublicKey = await Files.readFile('friendPublicKey.pem');
-	} catch (e) {
-		console.error(e);
-		console.error('Cannot find friend`s public key');
-	}
+	[friendPublicKey, privateKey, publicKey] = await Files.readFiles(
+		['friendPublicKey.pem', 'privateKey.pem', 'publicKey.pem'],
+		[
+			'Cannot find friend`s public key',
+			'Cannot read private key. You can generate a new one.',
+			`Cannot read public key. That's fine if your friend has it`,
+		]
+	);
 
-	if (!cli.flags.token) {
-		token = await prompts({
-			type: 'text',
-			name: 'token',
-			message: 'Enter token of your bot',
-			initial: cli.flags.token,
-		}).token;
+	console.log('HEY');
+
+	if (!token) {
+		token = (
+			await prompts({
+				type: 'text',
+				name: 'token',
+				message: 'Enter token of your bot',
+			})
+		).token;
 	}
 
 	const { passphrase } = await prompts({
@@ -55,31 +60,20 @@ const cli = meow(
 		message: 'Enter passphrase to generate new key / decode messages',
 	});
 
-	const { newKey } = await prompts({
-		type: 'confirm',
-		name: 'newKey',
-		message: 'Do you want to generate a new pair of keys?',
-		initial: false,
-	});
+	if (!privateKey || !publicKey) {
+		const { newKey } = await prompts({
+			type: 'confirm',
+			name: 'newKey',
+			message: 'Do you want to generate a new pair of keys?',
+			initial: true,
+		});
 
-	if (newKey) {
-		Encryption.generateKeys(passphrase);
-	}
+		if (newKey) {
+			({ privateKey, publicKey } = await Encryption.generateKeys(passphrase));
 
-	try {
-		privateKey = await Files.readFile('privateKey.pem');
-	} catch (e) {
-		console.error(e);
-		console.log(`Cannot read private key. You can generate a new one.`);
-	}
-
-	try {
-		publicKey = await Files.readFile('publicKey.pem');
-
-		console.log(`Your public key: `);
-		console.log(publicKey);
-	} catch (e) {
-		console.log(`Cannot read public key. That's fine if your friend has it`);
+			await Files.writeFile('publicKey.pem', publicKey);
+			await Files.writeFile('privateKey.pem', privateKey);
+		}
 	}
 
 	if (passphrase && friendPublicKey && privateKey) {
