@@ -42,8 +42,6 @@ const cli = meow(
 		]
 	);
 
-	console.log('HEY');
-
 	if (!token) {
 		token = (
 			await prompts({
